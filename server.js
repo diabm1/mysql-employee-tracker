@@ -177,9 +177,24 @@ function viewEmployeesByManager() {
   });
 }
 
-function removeEmployee(){
-    db.findAllEmployees()
-    .then(([rows]))
+function removeEmployee() {
+  db.findAllEmployees().then(([response]) => {
+    const employeeChoices = response.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id,
+    }));
+    prompt([
+      {
+        type: "list",
+        name: "employeeId",
+        message: "Which employee do you want to remove?",
+        choices: employeeChoices,
+      },
+    ])
+      .then((res) => db.removeEmployee(res.employeeId))
+      .then(() => console.log("Removed employee from the database"))
+      .then(() => init());
+  });
 }
 
 // WHEN I choose to view all roles
@@ -239,8 +254,6 @@ async function addEmployee() {
 
 // WHEN I choose to add a role
 // THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-
-
 
 // WHEN I choose to update an employee role
 // THEN I am prompted to select an employee to update and their new role and this information is updated in the database
