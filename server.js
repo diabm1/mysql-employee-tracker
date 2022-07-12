@@ -315,8 +315,28 @@ function addRole() {
   });
 }
 
+function removeRole() {
+  db.findRoles().then(([res]) => {
+    const roleChoice = res.map(({ id, title }) => ({
+      name: title,
+      value: id,
+    }));
+    prompt([
+      {
+        type: "list",
+        name: "roleId",
+        message: "Which role would you like to remove?",
+        choices: roleChoice,
+      },
+    ])
+      .then((res) => db.removeRole(res.roleId))
+      .then(() => console.log("Removed from database"))
+      .then(() => init());
+  });
+}
 // WHEN I choose to view all departments
 // THEN I am presented with a formatted table showing department names and department ids
+
 
 // WHEN I choose to add a department
 // THEN I am prompted to enter the name of the department and that department is added to the database
