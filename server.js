@@ -334,9 +334,35 @@ function removeRole() {
       .then(() => init());
   });
 }
+
 // WHEN I choose to view all departments
 // THEN I am presented with a formatted table showing department names and department ids
+function viewDepartments() {
+  db.findDepartments()
+    .then(([res]) => {
+      console.log("\n");
+      console.table(res);
+    })
+    .then(() => init());
+}
 
+function addDepartment() {
+  prompt([
+    {
+      name: "name",
+      message: "What is the name of dept?",
+    },
+  ]).then((response) => {
+    db.createDepartment(response)
+      .then(() => console.log(`Added ${response.name} to the db`))
+      .then(() => init());
+  });
+}
+
+function removeDept(){
+  db.findDepartments()
+  .then(([response]))
+}
 
 // WHEN I choose to add a department
 // THEN I am prompted to enter the name of the department and that department is added to the database
