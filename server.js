@@ -361,7 +361,23 @@ function addDepartment() {
 
 function removeDept(){
   db.findDepartments()
-  .then(([response]))
+  .then(([response]) => {
+    const departmentChoices = response.map(({id, name}) => ({
+      name: name,
+      value: id
+    }))
+    prompt([
+      {
+        type: "list",
+        name: "departmentId",
+        message: "Which debt would you like to remove?",
+        choices: departmentChoices,
+      },
+    ])
+      .then((res) => db.removeDepartment(res.departmentId))
+      .then(() => console.log("Removed from database"))
+      .then(() => init());
+  })
 }
 
 // WHEN I choose to add a department
