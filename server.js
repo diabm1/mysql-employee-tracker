@@ -197,6 +197,45 @@ function removeEmployee() {
   });
 }
 
+// WHEN I choose to update an employee role
+// THEN I am prompted to select an employee to update and their new role and this information is updated in the database
+function updateEmployeeRole() {
+  db.findAllEmployees().then(([response]) => {
+    const employeeChoices = response.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id,
+    }));
+    prompt([
+      {
+        type: "list",
+        name: "employeeId",
+        message: "Which employee role would you like to update?",
+        choices: employeeChoices,
+      },
+    ]).then(() => {
+      db.findRoles().then(([response]) => {
+        const roleChoices = response.map(({ id, title }) => ({
+          name: title,
+          value: id,
+        }));
+        prompt([
+          {
+            type: "list",
+            name: "roleId",
+            message: "Which role do you want to assign to an employee?",
+            choices: roleChoices,
+          },
+        ])
+          .then((response) =>
+            db.updateEmployeeRole(response.roleId)
+          )
+          .then(() => console.log("Updated the employee's role"))
+          .then(() => loadMainPrompts());
+      });
+    });
+  });
+}
+
 // WHEN I choose to view all roles
 // THEN I am presented with the job title, role id, the department that role belongs to, and the salary for that role
 function viewRoles() {
@@ -254,6 +293,3 @@ async function addEmployee() {
 
 // WHEN I choose to add a role
 // THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
-
-// WHEN I choose to update an employee role
-// THEN I am prompted to select an employee to update and their new role and this information is updated in the database
