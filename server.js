@@ -115,7 +115,7 @@ function loadMainPrompts() {
         removeDepartment();
         break;
       case "VIEW_UTILIZED_BUDGET_BY_DEPARTMENT":
-        viewUtilizedBudgetByDepartment();
+        viewBudgetByDepartment();
         break;
       case "VIEW_ROLES":
         viewRoles();
@@ -245,8 +245,8 @@ function viewRoles() {
 
 // WHEN I choose to add an employee
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
-async function addEmployee() {
-  const [roles] = await DB.getRoles();
+function addEmployee() {
+  db.getRoles();
   console.log(roles);
   const roleArray = roles.map(({ id, title }) => ({
     name: title,
@@ -346,6 +346,8 @@ function viewDepartments() {
     .then(() => init());
 }
 
+// WHEN I choose to add a department
+// THEN I am prompted to enter the name of the department and that department is added to the database
 function addDepartment() {
   prompt([
     {
@@ -359,13 +361,12 @@ function addDepartment() {
   });
 }
 
-function removeDept(){
-  db.findDepartments()
-  .then(([response]) => {
-    const departmentChoices = response.map(({id, name}) => ({
+function removeDepartment() {
+  db.findDepartments().then(([response]) => {
+    const departmentChoices = response.map(({ id, name }) => ({
       name: name,
-      value: id
-    }))
+      value: id,
+    }));
     prompt([
       {
         type: "list",
@@ -377,8 +378,14 @@ function removeDept(){
       .then((res) => db.removeDepartment(res.departmentId))
       .then(() => console.log("Removed from database"))
       .then(() => init());
-  })
+  });
 }
 
-// WHEN I choose to add a department
-// THEN I am prompted to enter the name of the department and that department is added to the database
+function viewBudgetByDepartment() {
+  db.viewDepartmentBudget()
+    .then(([res]) => {
+      console.log("\n");
+      console.table(res);
+    })
+    .then(() => init());
+}
