@@ -226,9 +226,7 @@ function updateEmployeeRole() {
             choices: roleChoices,
           },
         ])
-          .then((response) =>
-            db.updateEmployeeRole(response.roleId)
-          )
+          .then((response) => db.updateEmployeeRole(response.roleId))
           .then(() => console.log("Updated the employee's role"))
           .then(() => loadMainPrompts());
       });
@@ -285,11 +283,40 @@ async function addEmployee() {
   });
 }
 
+// WHEN I choose to add a role
+// THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
+function addRole() {
+  db.findDepartments().then(([res]) => {
+    const departmentChoices = res.map(({ id, name }) => ({
+      name: name,
+      value: id,
+    }));
+
+    prompt([
+      {
+        name: "title",
+        message: "What is the name of role?",
+      },
+      {
+        name: "salary",
+        message: "What is the annual salary of the role?",
+      },
+      {
+        type: "list",
+        name: "department_id",
+        message: "Which department does the role belong to?",
+        choices: departmentChoices,
+      },
+    ]).then((role) => {
+      db.createRole(role)
+        .then(() => console.log(`Added ${role.title} to the database`))
+        .then(() => init());
+    });
+  });
+}
+
 // WHEN I choose to view all departments
 // THEN I am presented with a formatted table showing department names and department ids
 
 // WHEN I choose to add a department
 // THEN I am prompted to enter the name of the department and that department is added to the database
-
-// WHEN I choose to add a role
-// THEN I am prompted to enter the name, salary, and department for the role and that role is added to the database
