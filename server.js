@@ -246,8 +246,6 @@ function viewRoles() {
 // WHEN I choose to add an employee
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
 function addEmployee() {
-  db.getRoles();
-  console.log(roles);
   const roleArray = roles.map(({ id, title }) => ({
     name: title,
     value: id,
@@ -277,7 +275,31 @@ function addEmployee() {
       manager_id: null,
     };
 
-    DB.addEmployee(employeeObj).then((response) => {
+    db.findAllEmployees().then(([response]) => {
+      const managerChoices = employees.map(({ id, first_name, last_name }) => ({
+        name: `${first_name} ${last_name}`,
+        value: id
+      }))
+
+      managerChoices.unshift({ name: "None", value: null })
+
+      prompt({
+        type: "list",
+        name: "managerId",
+        message: "Who is the employee's manager?",
+        choices: managerChoices
+      })
+    });
+
+    // db.findRoles().then(([response]) => {
+    //   const roleChoice = response.map(({ id, title }) => ({
+    //     name: title,
+    //     value: id
+    //   }));
+
+    // });
+
+    db.addEmployee(employeeObj).then((response) => {
       viewEmployees();
     });
   });
@@ -388,4 +410,8 @@ function viewBudgetByDepartment() {
       console.table(res);
     })
     .then(() => init());
+}
+
+function quit() {
+  process.exit();
 }
