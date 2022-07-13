@@ -246,10 +246,10 @@ function viewRoles() {
 // WHEN I choose to add an employee
 // THEN I am prompted to enter the employee’s first name, last name, role, and manager, and that employee is added to the database
 function addEmployee() {
-  const roleArray = roles.map(({ id, title }) => ({
-    name: title,
-    value: id,
-  }));
+  // const roleArray = roles.map(({ id, title }) => ({
+  //   name: title,
+  //   value: id,
+  // }));
   prompt([
     {
       type: "input",
@@ -261,46 +261,57 @@ function addEmployee() {
       name: "lastName",
       message: "What is the employees last name?",
     },
-    {
-      type: "list",
-      name: "role",
-      message: "What is the employees new role?",
-      choices: roleArray,
-    },
+    // {
+    //   type: "list",
+    //   name: "role",
+    //   message: "What is the employees new role?",
+    //   choices: roleArray,
+    // },
   ]).then((answers) => {
-    const employeeObj = {
-      first_name: answers.firstName,
-      last_name: answers.lastName,
-      role_id: answers.role,
-      manager_id: null,
-    };
+    let firstName = answers.firstName;
+    let lastName = answers.lastName;
 
-    db.findAllEmployees().then(([response]) => {
-      const managerChoices = employees.map(({ id, first_name, last_name }) => ({
-        name: `${first_name} ${last_name}`,
-        value: id
-      }))
-
-      managerChoices.unshift({ name: "None", value: null })
-
+    db.findRoles().then(([response]) => {
+      const roleChoice = response.map(({ id, title }) => ({
+        name: title,
+        value: id,
+      }));
       prompt({
         type: "list",
-        name: "managerId",
-        message: "Who is the employee's manager?",
-        choices: managerChoices
-      })
-    });
+        name: "roleId",
+        message: "Who's the employee's role?",
+        choices: roleChoice,
+      }).then((res) => {
+        let role = res.role;
+        db.findAllEmployees().then(([res]) => {
+          const managerChoices = res.map(({ id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
+            value: id,
+          }));
 
-    // db.findRoles().then(([response]) => {
-    //   const roleChoice = response.map(({ id, title }) => ({
-    //     name: title,
-    //     value: id
-    //   }));
+          managerChoices.unshift({ name: "None", value: null });
 
-    // });
-
-    db.addEmployee(employeeObj).then((response) => {
-      viewEmployees();
+          prompt({
+            type: "list",
+            name: "managerId",
+            message: "Who is the employee's manager?",
+            choices: managerChoices,
+          })
+            .then((res) => {
+              let employeeObj = {
+                first_name: firstName,
+                last_name: lastName,
+                role_id: role,
+                manager_id: res.managerId,
+              };
+              db.createEmployee(employeeObj);
+            })
+            .then(() =>
+              console.log(`Added ${firstName} ${lastName} to the database`)
+            )
+            .then(() => init());
+        });
+      });
     });
   });
 }
