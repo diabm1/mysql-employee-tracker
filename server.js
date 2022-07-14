@@ -228,9 +228,29 @@ function updateEmployeeRole() {
         ])
           .then((response) => db.updateEmployeeRole(response.roleId))
           .then(() => console.log("Updated the employee's role"))
-          .then(() => loadMainPrompts());
+          .then(() => init());
       });
     });
+  });
+}
+
+function updateEmployeeManager(){
+  db.findAllManagers().then(([response]) => {
+    const managerChoices = response.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id,
+    }));
+    prompt([
+      {
+        type: "list",
+        name: "managerId",
+        message: "Which employee would you like to select for the current employee?",
+        choices: managerChoices,
+      },
+    ])
+    .then((response) => db.updateEmployeeManager(response.managerId))
+    .then(() => console.log("Updated the employee's manager"))
+    .then(() => init());
   });
 }
 
