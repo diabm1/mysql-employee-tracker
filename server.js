@@ -235,7 +235,7 @@ function updateEmployeeRole() {
 }
 
 function updateEmployeeManager(){
-  db.findAllManagers().then(([response]) => {
+  db.findAllEmployees().then(([response]) => {
     const managerChoices = response.map(({ id, first_name, last_name }) => ({
       name: `${first_name} ${last_name}`,
       value: id,

@@ -35,7 +35,7 @@ This is an command line application that lets the user view and interact with in
 
 ## Usage 
 Use inquirer from your command line to answer questions.
-View walk through video here - [Screencastify](https://drive.google.com/file/d/1kXqO2RwofW_8QawyAVUVZgY8uDXfVxX9/view)
+View walk through video here - [Screencastify](https://drive.google.com/file/d/1-osBk1_dbdEJA_K_KpUOVgZJguu8HUW3/view)
 
 ## Contributing 
 Contributors should read the installation section.
