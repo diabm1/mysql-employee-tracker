@@ -39,10 +39,3 @@ View walk through video here - [Screencastify](https://drive.google.com/file/d/1
 
 ## Contributing 
 Contributors should read the installation section.
-
-
-
-
-# add more to this
-# deploy to heroku
-# record video
